@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -20,46 +21,16 @@ public class JESSEdit {
 
     public static void main(String args[]) throws Exception {
         Options options = new Options();
-
-        OptionGroup defaultOptions = new OptionGroup();
-        defaultOptions.addOption(OptionBuilder.withLongOpt("help").withDescription("Print this help message.").create());
-        defaultOptions.addOption(OptionBuilder.withLongOpt("version").withDescription("Print application version and exit.").create());
-
-
-        OptionGroup optionGroupGUI = new OptionGroup();
-        optionGroupGUI.addOption(OptionBuilder.withLongOpt("gui").withDescription("Run the JESSEdit GUI.").create());
-        optionGroupGUI.addOption(OptionBuilder.withLongOpt("file").withDescription("ESS file to load.").create());
-
-        OptionGroup optionGroupCLI = new OptionGroup();
-        optionGroupCLI.addOption(OptionBuilder.withLongOpt("file").withDescription("ESS file to load.").create());
-
-        options.addOptionGroup(defaultOptions);
-        options.addOptionGroup(optionGroupGUI);
-        options.addOptionGroup(optionGroupCLI);
+        options.addOption(OptionBuilder.withLongOpt("file").withDescription("ESS file to load.").create());
 
         try {
             CommandLineParser parser = new BasicParser();
             CommandLine commandLine = parser.parse(options, args, true);
 
-            if (commandLine.getOptions().length > 0) {
-                if (commandLine.hasOption("version")) {
-                    System.out.println("version 1.0");
-                }
-
-                if (commandLine.hasOption("help")) {
-                    System.out.println("hep meh");
-                    printHelp(options);
-                }
+            if (commandLine.hasOption("file")) {
+                dumpESSFile(commandLine.getOptionValue("file"));
             } else {
-                if (commandLine.hasOption("gui")) {
-                    logger.error("LOL.");
-                } else {
-                    if (commandLine.hasOption("file")) {
-                        dumpESSFile(commandLine.getOptionValue("file"));
-                    } else {
-                        printHelp(options);
-                    }
-                }
+                printHelp(options);
             }
         } catch (ParseException parseException) {
             printHelp(options);
@@ -72,7 +43,7 @@ public class JESSEdit {
     }
 
     private static void dumpESSFile(String fileName) throws IOException {
-        InputStream inputStream = JESSEdit.class.getResourceAsStream("/autosave1.ess");
+        InputStream inputStream = new FileInputStream(fileName);
 
         ESSFile essFile = ESSReader.readESSFile(inputStream);
 
@@ -88,8 +59,6 @@ public class JESSEdit {
         }
 
         logger.info(essFile.getHeader().toString());
-
-
     }
 
     private static void showScreenshot(final ESSFile essFile) {
