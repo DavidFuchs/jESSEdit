@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -21,7 +22,7 @@ public class JESSEdit {
 
     public static void main(String args[]) throws Exception {
         Options options = new Options();
-        options.addOption(OptionBuilder.withLongOpt("file").withDescription("ESS file to load.").create());
+        options.addOption("f", "file", true, "The ESS file to load.");
 
         try {
             CommandLineParser parser = new BasicParser();
@@ -43,22 +44,28 @@ public class JESSEdit {
     }
 
     private static void dumpESSFile(String fileName) throws IOException {
-        InputStream inputStream = new FileInputStream(fileName);
+        try {
+            InputStream inputStream = new FileInputStream(fileName);
 
-        ESSFile essFile = ESSReader.readESSFile(inputStream);
+            logger.info("Parsing ESS file: {}.", fileName);
 
-        for (int index = 0; index < 10; index++) {
-            StructRefId refId = essFile.getChangeForms().get(index).getRefId();
+            ESSFile essFile = ESSReader.readESSFile(inputStream);
 
-            for (StructRefId id : essFile.getFormIdArray()) {
-                if (refId.equals(id)) {
-                    logger.info(String.format("%d: %s -> %s", index, refId.toString(), id.toString()));
-                    break;
+            for (int index = 0; index < 10; index++) {
+                StructRefId refId = essFile.getChangeForms().get(index).getRefId();
+
+                for (StructRefId id : essFile.getFormIdArray()) {
+                    if (refId.equals(id)) {
+                        logger.info(String.format("%d: %s -> %s", index, refId.toString(), id.toString()));
+                        break;
+                    }
                 }
             }
-        }
 
-        logger.info(essFile.getHeader().toString());
+            logger.info(essFile.getHeader().toString());
+        } catch (FileNotFoundException fnfex) {
+            logger.error("ESS file not found: {}", fileName);
+        }
     }
 
     private static void showScreenshot(final ESSFile essFile) {
