@@ -7,23 +7,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * © David Fuchs 2013
- */
 public class ESSWriter {
     private static final Logger logger = LoggerFactory.getLogger(ESSWriter.class);
 
     private ESSOutputStream essOutputStream;
     private ESSFile essFile;
 
-    private ESSWriter(ESSFile essFile, OutputStream outputStream) {
-        this.essFile = essFile;
+    private ESSWriter(OutputStream outputStream, ESSFile essFile) {
         this.essOutputStream = new ESSOutputStream(outputStream);
+        this.essFile = essFile;
     }
 
-    public static void writeESSFile(ESSFile essFile, OutputStream outputStream) throws IOException {
-        new ESSWriter(essFile, outputStream).writeESSFile();
+    public static void writeESSFile(OutputStream outputStream, ESSFile essFile) throws IOException {
+        new ESSWriter(outputStream, essFile).writeESSFile();
     }
 
     public void writeESSFile() throws IOException {

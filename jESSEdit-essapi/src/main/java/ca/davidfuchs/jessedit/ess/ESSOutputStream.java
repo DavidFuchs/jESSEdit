@@ -9,10 +9,6 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-/**
- * Created with IntelliJ IDEA.
- * © David Fuchs 2013
- */
 class ESSOutputStream {
     private LittleEndianDataOutputStream outputStream;
 
