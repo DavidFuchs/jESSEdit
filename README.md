@@ -8,6 +8,11 @@ part where I could clean my games with it, I did complete the API insofar as rea
 files (ESS files).  As such, I leave it as an exercise for other developers to take this API and do something useful
 with it.
 
+Building the API
+================
+
+jESSEdit requires [Maven](http://maven.apache.org/) 3.0.x.  Build the project by executing `mvn package`.
+
 Usage
 =====
 
