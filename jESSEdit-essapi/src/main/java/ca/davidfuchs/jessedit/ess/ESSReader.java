@@ -140,12 +140,6 @@ public class ESSReader {
         }
     }
 
-    private void populateRefIdArray(List<StructRefId> target, long size) throws IOException {
-        for (int index = 0; index < size; index++) {
-            target.add(readRefId());
-        }
-    }
-
     private StructGlobalData readStructGlobalData() throws IOException {
         StructGlobalData structGlobalData = new StructGlobalData();
 
@@ -164,7 +158,9 @@ public class ESSReader {
         structChangeForms.setType(essInputStream.readUnsignedByte());
         structChangeForms.setVersion(essInputStream.readUnsignedByte());
 
-        short fieldLengthType = (short) ((structChangeForms.getType() & 0b11000000) >> 6);
+        // The getFieldLengthType() method operates on the 'type' byte we just read, which actually holds two
+        // different pieces of data. See StructChangeForms.getFieldLengthType() for more information.
+        short fieldLengthType = structChangeForms.getFieldLengthType();
 
         if (fieldLengthType == 0) {
             structChangeForms.setLength1(essInputStream.readUnsignedByte());
@@ -203,5 +199,4 @@ public class ESSReader {
 
         return formId;
     }
-
 }
