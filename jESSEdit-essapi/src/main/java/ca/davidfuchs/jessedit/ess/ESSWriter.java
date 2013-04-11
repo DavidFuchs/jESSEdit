@@ -122,7 +122,7 @@ public class ESSWriter {
             essOutputStream.writeUnsignedByte(structChangeForms.getType());
             essOutputStream.writeUnsignedByte(structChangeForms.getVersion());
 
-            short fieldLengthType = (short) ((structChangeForms.getType() & 0b11000000) >> 6);
+            short fieldLengthType = structChangeForms.getFieldLengthType();
 
             if (fieldLengthType == 0) {
                 essOutputStream.writeUnsignedByte((byte) structChangeForms.getLength1());

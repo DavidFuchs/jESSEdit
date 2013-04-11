@@ -35,9 +35,17 @@ public class StructChangeForms {
         this.type = type;
     }
 
+    // The upper two bits of the 'type' field represent the data type used to store the length of the data section.
+    // 0 = unsigned byte, 1 = unsigned short, 2 = unsigned int
+    public byte getFieldLengthType() {
+        return (byte) ((type & 0b11000000) >> 6);
+    }
+
+    // The lower 6 bits of the 'type' field represent the type of change form.  We try to map this to an enumeration
+    // that stores known change form types.  The enumeration is not exhaustive and might be missing a lot of types.
     public ChangeFormType getChangeFormType() {
         for (ChangeFormType changeFormType : ChangeFormType.values()) {
-            if (changeFormType.ordinal() == (byte) (type & 0x3F)) {
+            if (changeFormType.ordinal() == (byte) (type & 0b00111111)) {
                 return changeFormType;
             }
         }
@@ -91,6 +99,10 @@ public class StructChangeForms {
                 '}';
     }
 
+    // From what I can gather, I believe Skyrim uses a list of key/value pairs to store all it's data.
+    // When you load a game, it takes all the default values, and applies these change forms to them, to build up
+    // the environment according to the save game.  This list of change form types is not exhaustive, I just
+    // found them online at http://www.uesp.net/wiki/Tes5Mod:Save_File_Format
     public enum ChangeFormType {
         REFR((byte) 63, "ObjectReference"), ACHR((byte) 64, "Actor"), PMIS((byte) 65), PGRE((byte) 67), PBEA((byte) 68), PFLA((byte) 69),
         CELL((byte) 62), INFO((byte) 78, "TopicInfo"), QUST((byte) 79, "Quest"), NPC_((byte) 45, "ActorBase"), ACTI((byte) 25, "Activator"), TACT((byte) 26, "TalkingActivator"),
